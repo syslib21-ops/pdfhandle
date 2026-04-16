@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF 분할 · 병합</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="app-header">
+        <div class="app-header-row">
+          <div class="app-header-text">
+            <h1>PDF 분할 · 병합</h1>
+            <p class="tagline">구간으로 나누고, 여러 파일을 한데 모읍니다.</p>
+          </div>
+          <div class="theme-switch" role="group" aria-label="화면 테마">
+            <button
+              type="button"
+              class="theme-switch__btn"
+              data-theme-pick="light"
+              aria-pressed="true"
+            >
+              밝게
+            </button>
+            <button
+              type="button"
+              class="theme-switch__btn"
+              data-theme-pick="dark"
+              aria-pressed="false"
+            >
+              어둡게
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div class="panel-split">
+        <h2 class="section-heading">구간 분할</h2>
+        <p class="lead">
+          경계 페이지를 입력하면 해당 페이지 <strong>앞</strong>에서 나뉩니다.
+          예: <code>3, 7, 10, 15</code> → 1–2 / 3–6 / 7–9 / 10–14 / 15~끝
+        </p>
+
+        <div class="shell-card">
+          <label class="upload-zone">
+            <input
+              id="pdf"
+              class="upload-zone__input"
+              type="file"
+              accept="application/pdf"
+            />
+            <span class="upload-zone__icon" aria-hidden="true">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                <path
+                  d="M8 28 L14 18 L20 26 L26 14 L32 22"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <rect
+                  x="6"
+                  y="8"
+                  width="28"
+                  height="24"
+                  rx="3"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  fill="none"
+                  opacity="0.35"
+                />
+              </svg>
+            </span>
+            <span class="upload-zone__title">PDF를 선택하세요</span>
+            <span class="upload-zone__hint">분할할 파일 한 개 · PDF 형식</span>
+          </label>
+
+          <div class="field-block">
+            <label class="field-label" for="bounds">경계 페이지 번호</label>
+            <input
+              id="bounds"
+              class="field-input"
+              type="text"
+              placeholder="예: 3, 7, 10, 15"
+              autocomplete="off"
+            />
+            <p class="field-hint">쉼표로 구분하여 입력 · 페이지 번호는 1부터</p>
+          </div>
+
+          <div class="actions-stack">
+            <button id="btnPreview" type="button" class="btn btn-segment" disabled>
+              구간 미리보기
+            </button>
+            <button id="btnFolder" type="button" class="btn btn-primary btn-block" disabled>
+              실행
+            </button>
+          </div>
+        </div>
+
+        <div class="shell-card shell-card--preview">
+          <div class="preview-label">구간 미리보기 결과</div>
+          <pre id="preview" class="preview preview--placeholder" aria-live="polite">경계를 입력하고 「구간 미리보기」를 누르면 여기에 표시됩니다.</pre>
+        </div>
+      </div>
+
+      <section id="status" class="status" hidden></section>
+
+      <div class="panel-merge">
+        <h2 class="section-heading">PDF 병합</h2>
+        <p class="lead">
+          아래 카드 순서대로 이어 하나의 파일로 만듭니다. 카드를
+          <strong>드래그</strong>해 순서를 바꿀 수 있습니다.
+        </p>
+
+        <div class="shell-card">
+          <label class="upload-zone">
+            <input
+              id="mergePdfs"
+              class="upload-zone__input"
+              type="file"
+              accept="application/pdf"
+              multiple
+            />
+            <span class="upload-zone__icon" aria-hidden="true">
+              <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                <path
+                  d="M8 28 L14 18 L20 26 L26 14 L32 22"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <rect
+                  x="6"
+                  y="8"
+                  width="28"
+                  height="24"
+                  rx="3"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  fill="none"
+                  opacity="0.35"
+                />
+              </svg>
+            </span>
+            <span class="upload-zone__title">PDF를 추가하세요</span>
+            <span class="upload-zone__hint">여러 개 선택 가능 · 누를 때마다 목록에 추가</span>
+          </label>
+
+          <p class="hint hint--inset">
+            잘못 넣었으면 카드의 <strong>×</strong>로 제거하거나 「목록 비우기」를 누르세요.
+          </p>
+
+          <div id="mergeListWrap" class="merge-list-wrap" hidden>
+            <div class="merge-list-toolbar">
+              <span class="merge-list-count" id="mergeListCount"></span>
+              <button type="button" id="btnMergeClear" class="btn-text" disabled>
+                목록 비우기
+              </button>
+            </div>
+            <p class="merge-drag-hint">카드를 끌어 놓으면 병합 순서가 바뀝니다.</p>
+            <ul id="mergeList" class="merge-list" role="list"></ul>
+          </div>
+
+          <div class="field-block">
+            <label class="field-label" for="mergeFileName">저장 파일 이름</label>
+            <input
+              id="mergeFileName"
+              class="field-input"
+              type="text"
+              value="merged.pdf"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </div>
+
+          <div class="actions-stack">
+            <button id="btnMergePreview" type="button" class="btn btn-segment" disabled>
+              순서 · 페이지 미리보기
+            </button>
+            <button id="btnMergeFolder" type="button" class="btn btn-primary btn-block" disabled>
+              실행
+            </button>
+          </div>
+        </div>
+
+        <div class="shell-card shell-card--preview">
+          <div class="preview-label">병합 미리보기 (페이지 수)</div>
+          <pre id="mergePreview" class="preview preview--placeholder" aria-live="polite">「순서 · 페이지 미리보기」를 누르면 여기에 표시됩니다.</pre>
+        </div>
+      </div>
+    </main>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
