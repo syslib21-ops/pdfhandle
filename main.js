@@ -1,3 +1,4 @@
+import "./style.css";
 import { PDFDocument } from "pdf-lib";
 
 const SPLIT_PLACEHOLDER =
