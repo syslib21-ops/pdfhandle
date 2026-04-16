@@ -24,7 +24,11 @@ jobs:
           node-version: "22"
           cache: npm
       - run: npm ci
-      - run: npm run build
+      - name: Build
+        run: npm run build
+        env:
+          # https://<user>.github.io/<저장소이름>/ 과 자산 경로 일치 (끝에 / 필수)
+          VITE_PAGES_BASE: "/${{ github.event.repository.name }}/"
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
