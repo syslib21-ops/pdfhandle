@@ -1,5 +1,4 @@
-import "./style.css";
-import { PDFDocument } from "pdf-lib";
+import { PDFDocument } from "https://esm.sh/pdf-lib@1.17.1?bundle";
 
 const SPLIT_PLACEHOLDER =
   "경계를 입력하고 「구간 미리보기」를 누르면 여기에 표시됩니다.";
